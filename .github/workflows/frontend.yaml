@@ -1,8 +1,8 @@
-name: deploy_static_website
+name: Blob storage website CI
 
 on:
-    push:
-        branches: [ main ]
+  push:
+    branches: [ main ]
 
 jobs:
   build:
@@ -11,15 +11,16 @@ jobs:
     - uses: actions/checkout@v3
     - uses: azure/login@v1
       with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Upload to blob storage
       uses: azure/CLI@v1
       with:
         inlineScript: |
-            az storage blob upload-batch --account-name webbrostorage --account-key ${{ secrets.AZURE_STORAGE_KEY }} --auth-mode key --overwrite -d '$web' -s .
-    
+          az storage blob upload-batch --account-name webbrostorage --auth-mode key -d '$web' -s .
+
+    # Azure logout (this remains important for security)
     - name: logout
       run: |
-            az logout
-      if: always()
+        az logout
+      if: always() 
